@@ -94,3 +94,37 @@ bool Server::add_pending_trx(std::string trx, std::string signature){
         return false;
     }   
 }
+
+size_t Server::mine(){
+    std::string mempool{};
+    for(const auto& transactions : pending_trxs)
+        mempool += transactions;
+
+    while (true){
+        for(auto pointer {clients.begin()} ; pointer != clients.end(); ++pointer){
+            size_t nonce {(pointer->first)->generate_nonce()};
+            std::string hash{crypto::sha256(mempool + std::to_string(nonce))};
+            
+            std::string ftcoh { hash };     //ftcoh stands for "firs 10 characters of hash"
+            ftcoh.erase(ftcoh.begin()+10, ftcoh.end());
+
+            if(ftcoh.find("000") != std::string::npos){     //az to test copy shod
+                
+                for(const auto& transaction : pending_trxs){
+                    std::string sender{}; std::string receiver{};
+                    double value{};
+
+                    parse_trx(transaction, sender, receiver, value);
+                    clients[get_client(sender)] -= value;
+                    clients[get_client(receiver)] += value;
+                }
+                
+                clients[(pointer->first)] += 6.25;
+                std::string miner { (pointer->first)->get_id() };
+                std::cout << "The block is mined by " << miner << std::endl;
+                pending_trxs.clear();
+                return nonce;
+            }
+        }
+    }
+}

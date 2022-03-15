@@ -10,6 +10,12 @@ int main(int argc, char **argv)
     if (false) // make false to run unit-tests
     {
         // debug section
+        
+        std::string str ("This is an example sentence.");
+        std::cout << str << '\n';
+        std::string str1 {str};
+        str1.erase (str1.begin()+10,str1.end());                        
+        std::cout << str1 << '\n';
     }
     else
     {
