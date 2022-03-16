@@ -72,7 +72,7 @@ bool Server::parse_trx(std::string trx, std::string& sender, std::string& receiv
             return 0;
         }  
         else
-            throw std::runtime_error("string is not acurate");
+            throw std::runtime_error("string is not accurate");
 }
 
 bool Server::add_pending_trx(std::string trx, std::string signature){
